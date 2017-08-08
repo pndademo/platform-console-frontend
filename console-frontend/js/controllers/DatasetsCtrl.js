@@ -25,8 +25,8 @@
 *-------------------------------------------------------------------------------*/
 
 angular.module('appControllers').controller('DatasetsCtrl', ['$scope', '$filter', '$http',
-  'DatasetService', 'ModalService', 'ConfigService', 'UtilService',
-  function($scope, $filter, $http, DatasetService, ModalService, ConfigService, UtilService) {
+  'DatasetService', 'ModalService', 'ConfigService', 'UtilService','$location',
+  function($scope, $filter, $http, DatasetService, ModalService, ConfigService, UtilService,$location) {
     $scope.datasets = []; // data that will be displayed
     $scope.oldDatasets = []; // copy of the data on the server
     $scope.changed = false;
@@ -253,5 +253,26 @@ angular.module('appControllers').controller('DatasetsCtrl', ['$scope', '$filter'
     $scope.policies = ['age', 'size'];
     $scope.modes = ['keep', 'archive', 'delete'];
     $scope.class = 'pnda-datasets';
+	
+	 DatasetService.archiveDataset().then(function(data) {
+		$scope.archiveDataset = data;
+    });
+  $scope.isRowHovered = false;
+  $scope.isRunning = true;
+	$scope.retrieve = function(data){
+        var jsonData = [];
+    jsonData.push({"path":data.path});
+    data.isDisabled = true;
+    console.log('added....');
+console.log(jsonData);
+		DatasetService.retrieveFiles(jsonData).then(function(response) {
+		$scope.responseRetreive = response;
+    data.isDisabled = false;
+    data.isRunning = true;
+    console.log('Item retrieved.....');
+    console.log($scope.responseRetreive);
+    });
+	}
+	
   }]
 );
