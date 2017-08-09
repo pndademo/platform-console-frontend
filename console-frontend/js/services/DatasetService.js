@@ -45,7 +45,35 @@ angular.module('appServices').factory('DatasetService', ['$resource', 'ConfigSer
         }, function() {
           console.log('Failed to update dataset ' + id);
         });
-      }
+      },
+    /**
+     * @ngdoc       function
+     * @name        archiveDataset
+     * @description trigger an http get request to nodeJS server to get the file details
+     * @returns     {JSON} A json document which contains the  file metadata.
+    */
+	  archiveDataset: function() {
+		var dataManager = ConfigService.backend["data-manager"];
+        var datasetsApi = "http://" + dataManager.host + ":" + dataManager.port + "/datasets/arch";
+		return $q.all([$http.get(datasetsApi)]).then(function(data) {
+          return data[0].data.data;
+        });
+		},
+    /**
+     * @ngdoc       function
+     * @name        retrieveFiles
+     * @description trigger an http put request to nodeJS server to do archival of file.
+     * @param       {JSON} A json document which contains the  file metadata.
+     * @return      {JSON} success or failure response.
+    */
+	  retrieveFiles: function(data) {
+		var dataManager = ConfigService.backend["data-manager"];
+        var datasetsApi = "http://" + dataManager.host + ":" + dataManager.port + "/datasets/retrieve"; 
+		return $q.all([$http.put(datasetsApi,data)]).then(function(data) {
+          return data[0].data.data;
+        });
+	  }
     };
   }]
 );
+

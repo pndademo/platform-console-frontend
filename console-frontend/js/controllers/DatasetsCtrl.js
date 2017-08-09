@@ -25,8 +25,8 @@
 *-------------------------------------------------------------------------------*/
 
 angular.module('appControllers').controller('DatasetsCtrl', ['$scope', '$filter', '$http',
-  'DatasetService', 'ModalService', 'ConfigService', 'UtilService',
-  function($scope, $filter, $http, DatasetService, ModalService, ConfigService, UtilService) {
+  'DatasetService', 'ModalService', 'ConfigService', 'UtilService','$location',
+  function($scope, $filter, $http, DatasetService, ModalService, ConfigService, UtilService,$location) {
     $scope.datasets = []; // data that will be displayed
     $scope.oldDatasets = []; // copy of the data on the server
     $scope.changed = false;
@@ -253,5 +253,35 @@ angular.module('appControllers').controller('DatasetsCtrl', ['$scope', '$filter'
     $scope.policies = ['age', 'size'];
     $scope.modes = ['keep', 'archive', 'delete'];
     $scope.class = 'pnda-datasets';
+	
+   //getting file details from server which need to be archived and display on UI.
+	 DatasetService.archiveDataset().then(function(data) {
+		$scope.archiveDataset = data;
+    });
+
+
+  $scope.isRowHovered = false; //used to display/hide retrieve button on mouseover and mouseleave action on table row.
+
+  $scope.isRunning = true; // used to remove archived row once retrieval completed for each file.
+
+  /**
+  * @ngdoc        function
+  * @name         retrieve
+  * @description  calling a http PUT request for archival. This function invoke on onlick operation of Retrieve button 
+                  on page.
+  * @param        {JSON} A json document which contains file details to be archived
+  */     
+	$scope.retrieve = function(data){
+    var jsonData = [];
+    jsonData.push({"path":data.path});
+    data.isDisabled = true; // disabling the button to avoid clicking it twice while earlier call in progress.
+		DatasetService.retrieveFiles(jsonData).then(function(response) {
+		$scope.responseRetreive = response; //capturing the response.
+    data.isDisabled = false; // enable button
+    data.isRunning = true; // remove the row once archived completed.
+    });
+	}
+	
   }]
 );
+
