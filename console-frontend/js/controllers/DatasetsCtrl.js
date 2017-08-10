@@ -262,8 +262,7 @@ angular.module('appControllers').controller('DatasetsCtrl', ['$scope', '$filter'
 
   $scope.isRowHovered = false; //used to display/hide retrieve button on mouseover and mouseleave action on table row.
 
-  $scope.isRunning = true; // used to remove archived row once retrieval completed for each file.
-
+  $scope.isRunning = true; // used to remove archived row once retrieval completed for each file in a row.
   /**
   * @ngdoc        function
   * @name         retrieve
